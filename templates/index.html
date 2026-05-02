@@ -12,6 +12,9 @@
         nav a { color: white; text-decoration: none; margin-left: 1.5rem; }
         .hero { background: linear-gradient(135deg, #1a1a2e, #e94560); color: white; text-align: center; padding: 3rem; }
         .hero h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .search-bar { max-width: 500px; margin: 1rem auto 0; display: flex; gap: 0.5rem; }
+        .search-bar input { flex: 1; padding: 0.7rem 1rem; border: none; border-radius: 6px; font-size: 1rem; }
+        .search-bar button { background: #e94560; color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 6px; cursor: pointer; font-size: 1rem; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s; }
         .card:hover { transform: translateY(-5px); }
@@ -24,7 +27,9 @@
         .btn:hover { background: #c73652; }
         .wa-btn { display: block; background: #25D366; color: white; text-align: center; padding: 0.5rem; border-radius: 6px; text-decoration: none; }
         .wa-btn:hover { background: #1da851; }
+        .detail-link { display: block; text-align: center; color: #666; font-size: 0.85rem; margin-top: 0.5rem; text-decoration: none; }
         .wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; padding: 1rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; }
+        .checkout-btn { display: block; background: #1a1a2e; color: white; text-align: center; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; margin: 0 1rem 1rem; }
         footer { background: #1a1a2e; color: white; text-align: center; padding: 1.5rem; margin-top: 2rem; }
     </style>
 </head>
@@ -39,21 +44,28 @@
     <div class="hero">
         <h2>Anna Mehndi Stencils</h2>
         <p>Premium quality henna stencils 🌿</p>
+        <form class="search-bar" method="GET" action="/">
+            <input type="text" name="search" placeholder="Search stencils..." value="{{ search }}">
+            <button type="submit">🔍</button>
+        </form>
     </div>
     <div class="grid">
         {% for p in products %}
         <div class="card">
-            {% if p.image %}
-            <img src="{{ url_for('static', filename='images/products/' + p.image) }}" alt="{{ p.title }}">
-            {% else %}
-            <div class="no-img">🌿</div>
-            {% endif %}
+            <a href="/product/{{ p.id }}">
+                {% if p.image %}
+                <img src="{{ url_for('static', filename='images/products/' + p.image) }}" alt="{{ p.title }}">
+                {% else %}
+                <div class="no-img">🌿</div>
+                {% endif %}
+            </a>
             <div class="card-body">
                 <h3>{{ p.title }}</h3>
                 <p class="price">Rs. {{ p.price|int }}</p>
                 <a href="/add-to-cart/{{ p.id }}" class="btn">🛒 Add to Cart</a>
-                <a href="https://wa.me/923127891021?text=Assalam%20o%20Alaikum!%20I%20want%20to%20order:%20{{ p.title|urlencode }}%20-%20{{ p.price|int }}%20Rs." 
-                   class="wa-btn" target="_blank">💬 Order on WhatsApp</a>
+                <a href="https://wa.me/923127891021?text=Assalam%20o%20Alaikum!%20I%20want%20to%20order:%20{{ p.title|urlencode }}%20-%20Rs.{{ p.price|int }}" 
+                   class="wa-btn" target="_blank">💬 WhatsApp Order</a>
+                <a href="/product/{{ p.id }}" class="detail-link">View Details →</a>
             </div>
         </div>
         {% endfor %}
