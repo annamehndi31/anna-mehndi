@@ -1,0 +1,6 @@
+venv/
+static/images/products/
+*.db
+__pycache__/
+page.html
+*.pyc
