@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
-import json
-import os
+import json, os, urllib.parse
 
 app = Flask(__name__)
 app.secret_key = "annahenna2024"
@@ -42,9 +41,7 @@ with app.app_context():
 def index():
     search = request.args.get("search", "")
     if search:
-        products = Product.query.filter(
-            Product.title.ilike(f"%{search}%")
-        ).all()
+        products = Product.query.filter(Product.title.ilike(f"%{search}%")).all()
     else:
         products = Product.query.all()
     return render_template("index.html", products=products, search=search)
@@ -70,11 +67,7 @@ def cart():
         p = Product.query.get(int(pid))
         if p:
             subtotal = p.price * qty
-            items.append({
-                "product": p,
-                "qty": qty,
-                "subtotal": subtotal
-            })
+            items.append({"product": p, "qty": qty, "subtotal": subtotal})
             total += subtotal
     return render_template("cart.html", items=items, total=total)
 
@@ -88,22 +81,15 @@ def remove(id):
 @app.route("/checkout")
 def checkout():
     cart = session.get("cart", {})
-    items = []
-    total = 0
     msg = "Assalam o Alaikum! I want to order:\n"
+    total = 0
     for pid, qty in cart.items():
         p = Product.query.get(int(pid))
         if p:
             subtotal = p.price * qty
-            items.append({
-                "product": p,
-                "qty": qty,
-                "subtotal": subtotal
-            })
             total += subtotal
             msg += f"- {p.title} x{qty} = Rs.{int(subtotal)}\n"
     msg += f"\nTotal: Rs.{int(total)}"
-    import urllib.parse
     wa_url = f"https://wa.me/923127891021?text={urllib.parse.quote(msg)}"
     return redirect(wa_url)
 

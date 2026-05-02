@@ -29,7 +29,6 @@
         .wa-btn:hover { background: #1da851; }
         .detail-link { display: block; text-align: center; color: #666; font-size: 0.85rem; margin-top: 0.5rem; text-decoration: none; }
         .wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; padding: 1rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; }
-        .checkout-btn { display: block; background: #1a1a2e; color: white; text-align: center; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; margin: 0 1rem 1rem; }
         footer { background: #1a1a2e; color: white; text-align: center; padding: 1.5rem; margin-top: 2rem; }
     </style>
 </head>
@@ -54,7 +53,7 @@
         <div class="card">
             <a href="/product/{{ p.id }}">
                 {% if p.image %}
-                <img src="{{ url_for('static', filename='images/products/' + p.image) }}" alt="{{ p.title }}">
+                <img src="{{ p.image }}" alt="{{ p.title }}" loading="lazy">
                 {% else %}
                 <div class="no-img">🌿</div>
                 {% endif %}
@@ -63,15 +62,14 @@
                 <h3>{{ p.title }}</h3>
                 <p class="price">Rs. {{ p.price|int }}</p>
                 <a href="/add-to-cart/{{ p.id }}" class="btn">🛒 Add to Cart</a>
-                <a href="https://wa.me/923127891021?text=Assalam%20o%20Alaikum!%20I%20want%20to%20order:%20{{ p.title|urlencode }}%20-%20Rs.{{ p.price|int }}" 
+                <a href="https://wa.me/923127891021?text=Assalam%20o%20Alaikum!%20I%20want%20to%20order:%20{{ p.title|urlencode }}%20-%20Rs.{{ p.price|int }}"
                    class="wa-btn" target="_blank">💬 WhatsApp Order</a>
                 <a href="/product/{{ p.id }}" class="detail-link">View Details →</a>
             </div>
         </div>
         {% endfor %}
     </div>
-    <a href="https://wa.me/923127891021?text=Assalam%20o%20Alaikum!%20I%20want%20to%20order%20from%20Anna%20Mehndi%20Stencils" 
-       class="wa-float" target="_blank">💬 WhatsApp Us</a>
+    <a href="https://wa.me/923127891021" class="wa-float" target="_blank">💬 WhatsApp Us</a>
     <footer><p>© 2024 Anna Mehndi Stencils | WhatsApp: 0312-7891021</p></footer>
 </body>
 </html>
