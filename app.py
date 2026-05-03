@@ -69,7 +69,10 @@ def index():
     category = request.args.get("category", "")
     query = Product.query
     if search: query = query.filter(Product.title.ilike(f"%{search}%"))
-    if category: query = query.filter(Product.category == category)
+    if category:
+        query = query.filter(Product.category == category)
+    else:
+        query = query.filter(Product.category == "Mehndi Stickers")
     products = query.order_by(Product.id.desc()).all()
     all_with_img = Product.query.filter(Product.image != "").all()
     featured = random.sample(all_with_img, min(5, len(all_with_img)))

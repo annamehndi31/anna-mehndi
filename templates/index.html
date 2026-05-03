@@ -92,7 +92,7 @@
 
     <!-- CATEGORIES BAR -->
     <div class="cat-bar">
-        <a href="/" {% if not active_category %}class="active"{% endif %}>🌿 All</a>
+        <a href="/" {% if active_category == "Mehndi Stickers" or not active_category %}class="active"{% endif %}>🎨 Mehndi Stickers</a>
         {% for cat in categories %}
         <a href="/category/{{ cat }}" {% if active_category == cat %}class="active"{% endif %}>
             {% if cat == "Mehndi Stickers" %}🎨{% elif cat == "Mehndi Cones" %}🌿{% elif cat == "Wall Art & CO2 Laser" %}🖼️{% elif cat == "Marbles & Bangles" %}💎{% else %}📦{% endif %}
