@@ -47,7 +47,7 @@ def index():
     if search:
         products = Product.query.filter(Product.title.ilike(f"%{search}%")).all()
     else:
-        products = Product.query.all()
+        products = Product.query.order_by(Product.id.desc()).all()
     return render_template("index.html", products=products, search=search)
 
 @app.route("/product/<int:id>")
@@ -115,7 +115,7 @@ def admin_logout():
 def admin_dashboard():
     if not admin_required():
         return redirect(url_for("admin_login"))
-    products = Product.query.all()
+    products = Product.query.order_by(Product.id.desc()).all()
     return render_template("admin_dashboard.html", products=products)
 
 @app.route("/admin/add", methods=["GET", "POST"])
