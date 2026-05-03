@@ -53,6 +53,9 @@
                 <img id="preview" class="preview">
                 <input type="hidden" name="image" id="imageUrl" value="{{ product.image }}">
 
+                <label>Description</label>
+                <textarea name="description" rows="5" style="width:100%;padding:0.8rem;margin-bottom:1rem;border:2px solid #eee;border-radius:6px;font-size:1rem;resize:vertical;">{{ product.description or "" }}</textarea>
+
                 <label>Vendor</label>
                 <input type="text" name="vendor" value="{{ product.vendor }}">
 
