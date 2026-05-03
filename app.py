@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
 import json, os, urllib.parse, random
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "annahenna2024"
@@ -17,6 +18,15 @@ class Product(db.Model):
     image = db.Column(db.String(500))
     link = db.Column(db.String(500))
     vendor = db.Column(db.String(100))
+    category = db.Column(db.String(100), default="Mehndi Stickers")
+
+class Visitor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    city = db.Column(db.String(100))
+    page = db.Column(db.String(200))
+    visited_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
     db.create_all()
@@ -34,26 +44,79 @@ with app.app_context():
                     price=price,
                     image=p.get("local_image", ""),
                     link=p["link"],
-                    vendor=p.get("vendor", "")
+                    vendor=p.get("vendor", ""),
+                    category="Mehndi Stickers"
                 ))
             db.session.commit()
+
+def track_visitor(page):
+    try:
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if ip:
+            ip = ip.split(',')[0].strip()
+        # Get location from ip
+        import urllib.request
+        location = json.loads(urllib.request.urlopen(f'http://ip-api.com/json/{ip}').read())
+        visitor = Visitor(
+            ip=ip,
+            country=location.get('country', 'Unknown'),
+            city=location.get('city', 'Unknown'),
+            page=page
+        )
+        db.session.add(visitor)
+        db.session.commit()
+    except:
+        pass
 
 def admin_required():
     return session.get("admin_logged_in")
 
+CATEGORIES = [
+    "Mehndi Stickers",
+    "Mehndi Cones",
+    "Wall Art & CO2 Laser",
+    "Marbles & Bangles",
+    "Other"
+]
+
 @app.route("/")
 def index():
+    track_visitor('/')
     search = request.args.get("search", "")
+    category = request.args.get("category", "")
+    query = Product.query
     if search:
-        products = Product.query.filter(Product.title.ilike(f"%{search}%")).order_by(Product.id.desc()).all()
-    else:
-        products = Product.query.order_by(Product.id.desc()).all()
-    all_products = Product.query.filter(Product.image != "").all()
-    featured = random.sample(all_products, min(5, len(all_products)))
-    return render_template("index.html", products=products, search=search, featured=featured)
+        query = query.filter(Product.title.ilike(f"%{search}%"))
+    if category:
+        query = query.filter(Product.category == category)
+    products = query.order_by(Product.id.desc()).all()
+    all_with_img = Product.query.filter(Product.image != "").all()
+    featured = random.sample(all_with_img, min(5, len(all_with_img)))
+    return render_template("index.html", products=products, search=search,
+                         featured=featured, categories=CATEGORIES, active_category=category)
+
+@app.route("/category/<cat>")
+def category(cat):
+    track_visitor(f'/category/{cat}')
+    products = Product.query.filter(Product.category == cat).order_by(Product.id.desc()).all()
+    all_with_img = Product.query.filter(Product.image != "").all()
+    featured = random.sample(all_with_img, min(5, len(all_with_img)))
+    return render_template("index.html", products=products, search="",
+                         featured=featured, categories=CATEGORIES, active_category=cat)
+
+@app.route("/about")
+def about():
+    track_visitor('/about')
+    return render_template("about.html")
+
+@app.route("/contact")
+def contact():
+    track_visitor('/contact')
+    return render_template("contact.html")
 
 @app.route("/product/<int:id>")
 def product(id):
+    track_visitor(f'/product/{id}')
     p = Product.query.get_or_404(id)
     return render_template("product.html", product=p)
 
@@ -116,7 +179,14 @@ def admin_dashboard():
     if not admin_required():
         return redirect(url_for("admin_login"))
     products = Product.query.order_by(Product.id.desc()).all()
-    return render_template("admin_dashboard.html", products=products)
+    visitors = Visitor.query.order_by(Visitor.visited_at.desc()).limit(50).all()
+    total_visitors = Visitor.query.count()
+    today_visitors = Visitor.query.filter(
+        db.func.date(Visitor.visited_at) == datetime.utcnow().date()
+    ).count()
+    return render_template("admin_dashboard.html", products=products,
+                         visitors=visitors, total_visitors=total_visitors,
+                         today_visitors=today_visitors)
 
 @app.route("/admin/add", methods=["GET", "POST"])
 def admin_add():
@@ -135,12 +205,13 @@ def admin_add():
             price=price,
             image=image_url,
             link=request.form.get("link") or auto_link,
-            vendor=request.form.get("vendor", "")
+            vendor=request.form.get("vendor", ""),
+            category=request.form.get("category", "Mehndi Stickers")
         )
         db.session.add(product)
         db.session.commit()
         return redirect(url_for("admin_dashboard"))
-    return render_template("admin_add.html")
+    return render_template("admin_add.html", categories=CATEGORIES)
 
 @app.route("/admin/edit/<int:id>", methods=["GET", "POST"])
 def admin_edit(id):
@@ -151,11 +222,12 @@ def admin_edit(id):
         p.title = request.form.get("title")
         p.price = float(request.form.get("price", 0))
         p.vendor = request.form.get("vendor", "")
+        p.category = request.form.get("category", "Mehndi Stickers")
         if request.form.get("image"):
             p.image = request.form.get("image")
         db.session.commit()
         return redirect(url_for("admin_dashboard"))
-    return render_template("admin_edit.html", product=p)
+    return render_template("admin_edit.html", product=p, categories=CATEGORIES)
 
 @app.route("/admin/delete/<int:id>")
 def admin_delete(id):

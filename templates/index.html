@@ -9,61 +9,98 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
         header { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        header h1 { font-size: 1.5rem; }
-        nav a { color: white; text-decoration: none; margin-left: 1.5rem; }
+        header h1 { font-size: 1.3rem; }
+        .nav-links { display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links a { color: white; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.9rem; }
+        .nav-links a:hover { background: rgba(255,255,255,0.1); }
+
+        /* CATEGORIES BAR */
+        .cat-bar { background: #e94560; padding: 0.6rem 2rem; display: flex; gap: 0.5rem; overflow-x: auto; }
+        .cat-bar a { color: white; text-decoration: none; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+        .cat-bar a:hover, .cat-bar a.active { background: rgba(255,255,255,0.25); }
 
         /* HERO */
         .hero { background: linear-gradient(135deg, #1a1a2e, #e94560); color: white; text-align: center; padding: 2rem; }
-        .hero h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .hero h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
         .search-bar { max-width: 500px; margin: 1rem auto 0; display: flex; gap: 0.5rem; }
         .search-bar input { flex: 1; padding: 0.7rem 1rem; border: none; border-radius: 6px; font-size: 1rem; }
         .search-bar button { background: #c73652; color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 6px; cursor: pointer; }
 
-        /* BANNER SLIDER */
+        /* SOCIAL BAR */
+        .social-bar { background: #1a1a2e; padding: 0.6rem 2rem; display: flex; gap: 1rem; justify-content: center; }
+        .social-bar a { color: white; text-decoration: none; font-size: 0.85rem; padding: 0.3rem 0.8rem; border-radius: 4px; }
+        .yt { background: #FF0000; }
+        .tt { background: #333; }
+        .wa { background: #25D366; }
+
+        /* BANNER */
         .banner-section { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-        .banner-section h3 { font-size: 1.2rem; margin-bottom: 1rem; color: #1a1a2e; }
-        .banner-slider { position: relative; overflow: hidden; border-radius: 12px; background: #1a1a2e; height: 280px; }
+        .banner-section h3 { font-size: 1.1rem; margin-bottom: 0.8rem; color: #1a1a2e; }
+        .banner-slider { position: relative; overflow: hidden; border-radius: 12px; background: #1a1a2e; height: 260px; }
         .banner-slide { position: absolute; width: 100%; height: 100%; display: flex; align-items: center; opacity: 0; transition: opacity 0.8s ease; }
         .banner-slide.active { opacity: 1; }
         .banner-img { width: 45%; height: 100%; object-fit: cover; }
-        .banner-info { flex: 1; padding: 2rem; color: white; }
-        .banner-info h2 { font-size: 1.4rem; margin-bottom: 0.8rem; line-height: 1.4; }
-        .banner-price { font-size: 2rem; font-weight: bold; color: #e94560; margin-bottom: 1rem; }
-        .banner-btn { display: inline-block; background: #e94560; color: white; padding: 0.7rem 1.5rem; border-radius: 6px; text-decoration: none; margin-right: 0.5rem; }
-        .banner-wa { display: inline-block; background: #25D366; color: white; padding: 0.7rem 1.5rem; border-radius: 6px; text-decoration: none; }
-        .banner-dots { text-align: center; padding: 0.8rem; background: #1a1a2e; }
-        .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #666; margin: 0 4px; cursor: pointer; transition: background 0.3s; }
+        .banner-info { flex: 1; padding: 1.5rem; color: white; }
+        .banner-info h2 { font-size: 1.2rem; margin-bottom: 0.6rem; line-height: 1.4; }
+        .banner-price { font-size: 1.8rem; font-weight: bold; color: #e94560; margin-bottom: 0.8rem; }
+        .banner-btn { display: inline-block; background: #e94560; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; margin-right: 0.5rem; font-size: 0.9rem; }
+        .banner-wa { display: inline-block; background: #25D366; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; }
+        .banner-dots { text-align: center; padding: 0.6rem; background: #1a1a2e; border-radius: 0 0 12px 12px; }
+        .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #666; margin: 0 3px; cursor: pointer; }
         .dot.active { background: #e94560; }
-        .banner-prev, .banner-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; padding: 0.8rem 1rem; cursor: pointer; font-size: 1.2rem; z-index: 10; border-radius: 6px; }
-        .banner-prev { left: 10px; }
-        .banner-next { right: 10px; }
+        .banner-prev, .banner-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; padding: 0.6rem 0.8rem; cursor: pointer; font-size: 1rem; z-index: 10; border-radius: 6px; }
+        .banner-prev { left: 8px; }
+        .banner-next { right: 8px; }
 
         /* PRODUCTS */
         .products-section { max-width: 1200px; margin: 1.5rem auto; padding: 0 1rem; }
-        .products-section h3 { font-size: 1.2rem; margin-bottom: 1rem; color: #1a1a2e; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.2rem; }
-        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .card:hover { transform: translateY(-5px); }
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-        .no-img { width: 100%; height: 180px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
-        .card-body { padding: 0.8rem; }
-        .card-body h3 { font-size: 0.85rem; margin-bottom: 0.4rem; height: 2.2rem; overflow: hidden; }
-        .price { color: #e94560; font-weight: bold; font-size: 1rem; margin-bottom: 0.6rem; }
-        .btn { display: block; background: #e94560; color: white; text-align: center; padding: 0.4rem; border-radius: 6px; text-decoration: none; margin-bottom: 0.4rem; font-size: 0.85rem; }
-        .wa-btn { display: block; background: #25D366; color: white; text-align: center; padding: 0.4rem; border-radius: 6px; text-decoration: none; font-size: 0.85rem; }
-        .detail-link { display: block; text-align: center; color: #666; font-size: 0.8rem; margin-top: 0.4rem; text-decoration: none; }
+        .products-section h3 { font-size: 1.1rem; margin-bottom: 1rem; color: #1a1a2e; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-4px); }
+        .card img { width: 100%; height: 170px; object-fit: cover; }
+        .no-img { width: 100%; height: 170px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+        .card-body { padding: 0.7rem; }
+        .card-body h3 { font-size: 0.82rem; margin-bottom: 0.4rem; height: 2rem; overflow: hidden; }
+        .price { color: #e94560; font-weight: bold; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .btn { display: block; background: #e94560; color: white; text-align: center; padding: 0.4rem; border-radius: 5px; text-decoration: none; margin-bottom: 0.3rem; font-size: 0.82rem; }
+        .wa-btn { display: block; background: #25D366; color: white; text-align: center; padding: 0.4rem; border-radius: 5px; text-decoration: none; font-size: 0.82rem; }
+        .detail-link { display: block; text-align: center; color: #666; font-size: 0.78rem; margin-top: 0.3rem; text-decoration: none; }
         .wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; padding: 0.8rem 1.2rem; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; font-size: 0.9rem; }
         footer { background: #1a1a2e; color: white; text-align: center; padding: 1.5rem; margin-top: 2rem; }
+        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .footer-links a { color: #aaa; text-decoration: none; font-size: 0.9rem; }
+        .footer-links a:hover { color: white; }
     </style>
 </head>
 <body>
     <header>
         <h1>🌿 Anna Mehndi Stencils</h1>
-        <nav>
+        <div class="nav-links">
             <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
             <a href="/cart">🛒 Cart</a>
-        </nav>
+        </div>
     </header>
+
+    <!-- CATEGORIES BAR -->
+    <div class="cat-bar">
+        <a href="/" {% if not active_category %}class="active"{% endif %}>🌿 All</a>
+        {% for cat in categories %}
+        <a href="/category/{{ cat }}" {% if active_category == cat %}class="active"{% endif %}>
+            {% if cat == "Mehndi Stickers" %}🎨{% elif cat == "Mehndi Cones" %}🌿{% elif cat == "Wall Art & CO2 Laser" %}🖼️{% elif cat == "Marbles & Bangles" %}💎{% else %}📦{% endif %}
+            {{ cat }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- SOCIAL BAR -->
+    <div class="social-bar">
+        <a href="https://youtube.com/@mehndi31-e6b?si=z15ztF43XCpOXCeF" class="yt" target="_blank">▶️ YouTube</a>
+        <a href="https://www.tiktok.com/search?q=annamehndi31" class="tt" target="_blank">🎵 TikTok</a>
+        <a href="https://wa.me/923127891021" class="wa" target="_blank">💬 WhatsApp</a>
+    </div>
 
     <div class="hero">
         <h2>Anna Mehndi Stencils</h2>
@@ -74,17 +111,17 @@
         </form>
     </div>
 
-    <!-- RANDOM PRODUCT BANNER -->
+    <!-- BANNER -->
     <div class="banner-section">
         <h3>🔥 Featured Products</h3>
-        <div class="banner-slider" id="bannerSlider">
+        <div class="banner-slider">
             {% for p in featured %}
             <div class="banner-slide {% if loop.first %}active{% endif %}">
                 {% if p.image %}
                 <img src="{{ p.image }}" alt="{{ p.title }}" class="banner-img">
                 {% endif %}
                 <div class="banner-info">
-                    <h2>{{ p.title }}</h2>
+                    <h2>{{ p.title[:50] }}</h2>
                     <div class="banner-price">Rs. {{ p.price|int }}</div>
                     <a href="/add-to-cart/{{ p.id }}" class="banner-btn">🛒 Add to Cart</a>
                     <a href="https://wa.me/923127891021?text=Assalam%20o%20Alaikum!%20I%20want%20to%20order:%20{{ p.title|urlencode }}%20-%20Rs.{{ p.price|int }}" class="banner-wa" target="_blank">💬 WhatsApp</a>
@@ -94,16 +131,16 @@
             <button class="banner-prev" onclick="changeBanner(-1)">❮</button>
             <button class="banner-next" onclick="changeBanner(1)">❯</button>
         </div>
-        <div class="banner-dots" id="bannerDots">
+        <div class="banner-dots">
             {% for p in featured %}
             <span class="dot {% if loop.first %}active{% endif %}" onclick="goToBanner({{ loop.index0 }})"></span>
             {% endfor %}
         </div>
     </div>
 
-    <!-- PRODUCTS GRID -->
+    <!-- PRODUCTS -->
     <div class="products-section">
-        <h3>🌿 All Products ({{ products|length }})</h3>
+        <h3>🌿 {{ active_category if active_category else 'All Products' }} ({{ products|length }})</h3>
         <div class="grid">
             {% for p in products %}
             <div class="card">
@@ -127,13 +164,22 @@
     </div>
 
     <a href="https://wa.me/923127891021" class="wa-float" target="_blank">💬 WhatsApp Us</a>
-    <footer><p>© 2024 Anna Mehndi Stencils | WhatsApp: 0312-7891021</p></footer>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/about">About Us</a>
+            <a href="/contact">Contact Us</a>
+            <a href="https://youtube.com/@mehndi31-e6b" target="_blank">▶️ YouTube</a>
+            <a href="https://www.tiktok.com/search?q=annamehndi31" target="_blank">🎵 TikTok</a>
+        </div>
+        <p>© 2024 Anna Mehndi Stencils | WhatsApp: 0312-7891021</p>
+    </footer>
 
     <script>
         let current = 0;
         const slides = document.querySelectorAll('.banner-slide');
         const dots = document.querySelectorAll('.dot');
-
         function showBanner(n) {
             slides[current].classList.remove('active');
             dots[current].classList.remove('active');
@@ -141,11 +187,8 @@
             slides[current].classList.add('active');
             dots[current].classList.add('active');
         }
-
         function changeBanner(dir) { showBanner(current + dir); }
         function goToBanner(n) { showBanner(n); }
-
-        // Auto slide every 4 seconds
         setInterval(() => changeBanner(1), 4000);
     </script>
 </body>

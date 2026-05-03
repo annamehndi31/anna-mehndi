@@ -10,17 +10,21 @@
         header { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         nav a { color: white; text-decoration: none; margin-left: 1rem; padding: 0.5rem 1rem; border-radius: 6px; background: #e94560; }
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
         .stat-card { background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .stat-card h3 { font-size: 2rem; color: #e94560; }
+        .stat-card p { color: #666; font-size: 0.9rem; }
+        .section-title { font-size: 1.2rem; margin-bottom: 1rem; color: #1a1a2e; }
         .add-btn { display: inline-block; background: #25D366; color: white; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; margin-bottom: 1rem; }
-        table { width: 100%; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-collapse: collapse; }
-        th { background: #1a1a2e; color: white; padding: 1rem; text-align: left; }
-        td { padding: 0.8rem 1rem; border-bottom: 1px solid #eee; }
+        table { width: 100%; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-collapse: collapse; margin-bottom: 2rem; }
+        th { background: #1a1a2e; color: white; padding: 1rem; text-align: left; font-size: 0.9rem; }
+        td { padding: 0.8rem 1rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
         td img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; }
-        .edit-btn { background: #1a1a2e; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; margin-right: 0.3rem; font-size: 0.85rem; }
-        .delete-btn { background: #e94560; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; }
+        .edit-btn { background: #1a1a2e; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; margin-right: 0.3rem; font-size: 0.8rem; }
+        .delete-btn { background: #e94560; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.8rem; }
         tr:hover { background: #f9f9f9; }
+        .visitor-table td { font-size: 0.85rem; }
+        .flag { font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -32,20 +36,53 @@
         </nav>
     </header>
     <div class="container">
+        <!-- STATS -->
         <div class="stats">
             <div class="stat-card">
                 <h3>{{ products|length }}</h3>
                 <p>Total Products</p>
             </div>
             <div class="stat-card">
-                <h3>Rs. {{ products|sum(attribute='price')|int }}</h3>
-                <p>Total Value</p>
+                <h3>{{ total_visitors }}</h3>
+                <p>Total Visitors</p>
             </div>
             <div class="stat-card">
-                <h3>{{ (products|sum(attribute='price') / products|length)|int if products else 0 }}</h3>
+                <h3>{{ today_visitors }}</h3>
+                <p>Today's Visitors</p>
+            </div>
+            <div class="stat-card">
+                <h3>Rs. {{ (products|sum(attribute='price') / products|length)|int if products else 0 }}</h3>
                 <p>Avg Price</p>
             </div>
         </div>
+
+        <!-- VISITOR TRACKING -->
+        <p class="section-title">👥 Recent Visitors</p>
+        <table class="visitor-table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Country</th>
+                    <th>City</th>
+                    <th>Page</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in visitors %}
+                <tr>
+                    <td>{{ v.ip }}</td>
+                    <td>{{ v.country }}</td>
+                    <td>{{ v.city }}</td>
+                    <td>{{ v.page }}</td>
+                    <td>{{ v.visited_at.strftime('%d/%m %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- PRODUCTS -->
+        <p class="section-title">📦 Products</p>
         <a href="/admin/add" class="add-btn">➕ Add New Product</a>
         <table>
             <thead>
@@ -53,7 +90,7 @@
                     <th>Image</th>
                     <th>Title</th>
                     <th>Price</th>
-                    <th>Vendor</th>
+                    <th>Category</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -61,12 +98,12 @@
                 {% for p in products %}
                 <tr>
                     <td><img src="{{ p.image }}" alt="{{ p.title }}"></td>
-                    <td>{{ p.title[:50] }}</td>
+                    <td>{{ p.title[:45] }}</td>
                     <td>Rs. {{ p.price|int }}</td>
-                    <td>{{ p.vendor }}</td>
+                    <td>{{ p.category }}</td>
                     <td>
                         <a href="/admin/edit/{{ p.id }}" class="edit-btn">✏️ Edit</a>
-                        <a href="/admin/delete/{{ p.id }}" class="delete-btn" onclick="return confirm('Delete this product?')">🗑️ Delete</a>
+                        <a href="/admin/delete/{{ p.id }}" class="delete-btn" onclick="return confirm('Delete?')">🗑️</a>
                     </td>
                 </tr>
                 {% endfor %}
