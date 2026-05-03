@@ -10,8 +10,11 @@ cloudinary.config(
 
 def upload_image(file):
     try:
+        print(f"Uploading to Cloudinary...")
+        print(f"Cloud name: {os.environ.get('CLOUDINARY_CLOUD_NAME')}")
         result = cloudinary.uploader.upload(file)
+        print(f"Upload success: {result['secure_url']}")
         return result["secure_url"]
     except Exception as e:
-        print(f"Upload error: {e}")
+        print(f"Upload FAILED: {e}")
         return ""
