@@ -225,3 +225,4 @@ def admin_delete(id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+# run once to add description column

@@ -23,10 +23,11 @@
         .btn:hover { background: #c73652; }
         .wa-btn { display: block; background: #25D366; color: white; text-align: center; padding: 0.8rem; border-radius: 6px; text-decoration: none; font-size: 1rem; font-weight: bold; }
         .wa-btn:hover { background: #1da851; }
-        .how-to-use { background: white; border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .how-to-use h3 { color: #1a1a2e; margin-bottom: 1rem; font-size: 1.2rem; border-bottom: 2px solid #e94560; padding-bottom: 0.5rem; }
-        .how-to-use ol { padding-left: 1.5rem; }
-        .how-to-use ol li { padding: 0.5rem 0; color: #555; line-height: 1.6; border-bottom: 1px solid #f5f5f5; }
+        .description-box { background: white; border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .description-box h3 { color: #1a1a2e; margin-bottom: 1rem; font-size: 1.2rem; border-bottom: 2px solid #e94560; padding-bottom: 0.5rem; }
+        .description-box p { color: #555; line-height: 1.8; white-space: pre-line; }
+        .description-box ol { padding-left: 1.5rem; }
+        .description-box ol li { padding: 0.5rem 0; color: #555; line-height: 1.6; border-bottom: 1px solid #f5f5f5; }
         .back { display: inline-block; margin-bottom: 1rem; color: #e94560; text-decoration: none; font-weight: bold; }
         .cod-badge { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 0.5rem 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #856404; text-align: center; }
         @media(max-width: 600px) { .product-detail { grid-template-columns: 1fr; } }
@@ -63,19 +64,28 @@
                 </div>
             </div>
         </div>
-        <div class="how-to-use">
-            <h3>📖 How To Use?</h3>
-            <ol>
-                <li>Wash and dry the skin.</li>
-                <li>Carefully remove white backing paper from stencil.</li>
-                <li>You can cut the stencil into small parts to apply on your skin.</li>
-                <li>Apply stencil to skin, adhesive side down.</li>
-                <li>Slowly peel back remove protective sheet.</li>
-                <li>Apply any henna to skin showing through the stencil.</li>
-                <li>Let dry according to paint instructions.</li>
-                <li>Once henna is completely dry, rub off excess paint and remove stencil.</li>
-                <li>And you're done! 🌿</li>
-            </ol>
+
+        <div class="description-box">
+            {% if product.description %}
+                <h3>📦 Product Details</h3>
+                <p>{{ product.description }}</p>
+            {% elif product.category == "Mehndi Stickers" %}
+                <h3>📖 How To Use?</h3>
+                <ol>
+                    <li>Wash and dry the skin.</li>
+                    <li>Carefully remove white backing paper from stencil.</li>
+                    <li>You can cut the stencil into small parts to apply on your skin.</li>
+                    <li>Apply stencil to skin, adhesive side down.</li>
+                    <li>Slowly peel back remove protective sheet.</li>
+                    <li>Apply any henna to skin showing through the stencil.</li>
+                    <li>Let dry according to paint instructions.</li>
+                    <li>Once henna is completely dry, rub off excess paint and remove stencil.</li>
+                    <li>And you're done! 🌿</li>
+                </ol>
+            {% else %}
+                <h3>📦 Product Details</h3>
+                <p>Premium quality product. Order via WhatsApp for more details.</p>
+            {% endif %}
         </div>
     </div>
 </body>
