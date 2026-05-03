@@ -45,7 +45,7 @@ def admin_required():
 def index():
     search = request.args.get("search", "")
     if search:
-        products = Product.query.filter(Product.title.ilike(f"%{search}%")).all()
+        products = Product.query.filter(Product.title.ilike(f"%{search}%")).order_by(Product.id.desc()).all()
     else:
         products = Product.query.order_by(Product.id.desc()).all()
     return render_template("index.html", products=products, search=search)
@@ -85,17 +85,15 @@ def remove(id):
 @app.route("/checkout")
 def checkout():
     cart = session.get("cart", {})
-    msg = "Assalam o Alaikum! I want to order:\n"
+    items = []
     total = 0
     for pid, qty in cart.items():
         p = Product.query.get(int(pid))
         if p:
             subtotal = p.price * qty
+            items.append({"product": p, "qty": qty, "subtotal": subtotal})
             total += subtotal
-            msg += f"- {p.title} x{qty} = Rs.{int(subtotal)}\n"
-    msg += f"\nTotal: Rs.{int(total)}"
-    wa_url = f"https://wa.me/923127891021?text={urllib.parse.quote(msg)}"
-    return redirect(wa_url)
+    return render_template("checkout.html", items=items, subtotal=total)
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
@@ -127,12 +125,7 @@ def admin_add():
             price = float(request.form.get("price", 0))
         except:
             price = 0
-        image_url = ""
-        if "image_file" in request.files:
-            file = request.files["image_file"]
-            if file and file.filename:
-                from upload_helper import upload_image
-                image_url = upload_image(file)
+        image_url = request.form.get("image", "")
         title = request.form.get("title", "")
         auto_link = f"https://web-production-8b9ae.up.railway.app/products/{title.lower().replace(' ', '-')}"
         product = Product(
@@ -156,12 +149,7 @@ def admin_edit(id):
         p.title = request.form.get("title")
         p.price = float(request.form.get("price", 0))
         p.vendor = request.form.get("vendor", "")
-        if "image_file" in request.files:
-            file = request.files["image_file"]
-            if file and file.filename:
-                from upload_helper import upload_image
-                p.image = upload_image(file)
-        elif request.form.get("image"):
+        if request.form.get("image"):
             p.image = request.form.get("image")
         db.session.commit()
         return redirect(url_for("admin_dashboard"))

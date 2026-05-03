@@ -2,46 +2,81 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart - Anna Mehndi Stencils</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
-        header { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
-        header a { color: white; text-decoration: none; margin-left: 1rem; }
+        header { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-left: 1.5rem; }
         .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-        h2 { margin-bottom: 1.5rem; }
+        h2 { margin-bottom: 1.5rem; color: #1a1a2e; }
         .item { background: white; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .total { text-align: right; font-size: 1.3rem; font-weight: bold; margin-top: 1rem; color: #e94560; }
+        .item img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 1rem; }
+        .item-left { display: flex; align-items: center; }
+        .item-info h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+        .item-info p { color: #666; font-size: 0.85rem; }
+        .item-right { text-align: right; }
+        .item-right strong { color: #e94560; display: block; margin-bottom: 0.3rem; }
         .remove { color: red; text-decoration: none; font-size: 0.85rem; }
-        .empty { text-align: center; padding: 3rem; color: #666; }
-        .back { display: inline-block; background: #1a1a2e; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; margin-top: 1rem; }
+        .summary { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 1rem; }
+        .summary-row { display: flex; justify-content: space-between; padding: 0.5rem 0; }
+        .summary-row.cod { color: #666; }
+        .summary-row.total { font-weight: bold; font-size: 1.2rem; color: #e94560; border-top: 2px solid #eee; padding-top: 1rem; margin-top: 0.5rem; }
+        .checkout-btn { display: block; background: #25D366; color: white; text-align: center; padding: 1rem; border-radius: 6px; text-decoration: none; font-size: 1.1rem; font-weight: bold; margin-top: 1rem; }
+        .checkout-btn:hover { background: #1da851; }
+        .continue { display: block; text-align: center; color: #666; margin-top: 0.8rem; text-decoration: none; }
+        .empty { text-align: center; padding: 3rem; color: #666; background: white; border-radius: 12px; }
+        .back-btn { display: inline-block; background: #1a1a2e; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; margin-top: 1rem; }
     </style>
 </head>
 <body>
     <header>
-        <h1>🛒 Cart</h1>
-        <nav><a href="/">← Back to Shop</a></nav>
+        <h1>🌿 Anna Mehndi Stencils</h1>
+        <nav><a href="/">Home</a><a href="/cart">🛒 Cart</a></nav>
     </header>
     <div class="container">
-        <h2>Your Cart</h2>
+        <h2>🛒 Your Cart</h2>
         {% if items %}
             {% for item in items %}
             <div class="item">
-                <div>
-                    <strong>{{ item.product.title }}</strong><br>
-                    <small>Rs. {{ item.product.price|int }} × {{ item.qty }}</small>
+                <div class="item-left">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image }}" alt="{{ item.product.title }}">
+                    {% endif %}
+                    <div class="item-info">
+                        <h4>{{ item.product.title[:40] }}</h4>
+                        <p>Rs. {{ item.product.price|int }} × {{ item.qty }}</p>
+                    </div>
                 </div>
-                <div>
-                    <strong>Rs. {{ item.subtotal|int }}</strong><br>
-                    <a href="/remove/{{ item.product.id }}" class="remove">Remove</a>
+                <div class="item-right">
+                    <strong>Rs. {{ item.subtotal|int }}</strong>
+                    <a href="/remove/{{ item.product.id }}" class="remove">🗑️ Remove</a>
                 </div>
             </div>
             {% endfor %}
-            <div class="total">Total: Rs. {{ total|int }}</div>
+
+            <div class="summary">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>Rs. {{ total|int }}</span>
+                </div>
+                <div class="summary-row cod">
+                    <span>🚚 COD Charges</span>
+                    <span>Rs. 250</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>Rs. {{ (total + 250)|int }}</span>
+                </div>
+                <a href="/checkout" class="checkout-btn">✅ Proceed to Checkout →</a>
+                <a href="/" class="continue">← Continue Shopping</a>
+            </div>
         {% else %}
             <div class="empty">
-                <p>Cart is empty 😢</p>
-                <a href="/" class="back">Go Shopping</a>
+                <p style="font-size:3rem">🛒</p>
+                <p style="margin: 1rem 0">Your cart is empty!</p>
+                <a href="/" class="back-btn">Go Shopping</a>
             </div>
         {% endif %}
     </div>
