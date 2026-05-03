@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request, flash
+from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
 import json, os, urllib.parse
 
@@ -37,7 +37,6 @@ with app.app_context():
                     vendor=p.get("vendor", "")
                 ))
             db.session.commit()
-            print(f"Imported {len(products)} products!")
 
 def admin_required():
     return session.get("admin_logged_in")
@@ -98,7 +97,6 @@ def checkout():
     wa_url = f"https://wa.me/923127891021?text={urllib.parse.quote(msg)}"
     return redirect(wa_url)
 
-# ADMIN ROUTES
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -129,11 +127,19 @@ def admin_add():
             price = float(request.form.get("price", 0))
         except:
             price = 0
+        image_url = ""
+        if "image_file" in request.files:
+            file = request.files["image_file"]
+            if file and file.filename:
+                from upload_helper import upload_image
+                image_url = upload_image(file)
+        title = request.form.get("title", "")
+        auto_link = f"https://web-production-8b9ae.up.railway.app/products/{title.lower().replace(' ', '-')}"
         product = Product(
-            title=request.form.get("title"),
+            title=title,
             price=price,
-            image=request.form.get("image", ""),
-            link=request.form.get("link", ""),
+            image=image_url,
+            link=request.form.get("link") or auto_link,
             vendor=request.form.get("vendor", "")
         )
         db.session.add(product)
@@ -149,8 +155,14 @@ def admin_edit(id):
     if request.method == "POST":
         p.title = request.form.get("title")
         p.price = float(request.form.get("price", 0))
-        p.image = request.form.get("image", "")
         p.vendor = request.form.get("vendor", "")
+        if "image_file" in request.files:
+            file = request.files["image_file"]
+            if file and file.filename:
+                from upload_helper import upload_image
+                p.image = upload_image(file)
+        elif request.form.get("image"):
+            p.image = request.form.get("image")
         db.session.commit()
         return redirect(url_for("admin_dashboard"))
     return render_template("admin_edit.html", product=p)
