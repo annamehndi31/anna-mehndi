@@ -240,3 +240,11 @@ def admin_delete(id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+@app.route("/admin/visitors")
+def admin_visitors():
+    if not admin_required():
+        return redirect(url_for("admin_login"))
+    visitors = Visitor.query.order_by(Visitor.visited_at.desc()).all()
+    total = Visitor.query.count()
+    return render_template("visitors.html", visitors=visitors, total=total)
