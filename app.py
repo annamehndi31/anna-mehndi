@@ -10,7 +10,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 ADMIN_PASSWORD = "anna1234"
-CATEGORIES = ["Mehndi Stickers","Mehndi Cones","Wall Art & CO2 Laser","Marbles & Bangles","Other"]
+CATEGORIES = ["Mehndi Stickers","Mehndi Cones","Wall Art & CO2 Laser","Marbles & Bangles","🔥 Deals","Other"]
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
