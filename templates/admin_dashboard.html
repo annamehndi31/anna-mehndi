@@ -8,7 +8,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; }
         header { background: #1a1a2e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        nav a { color: white; text-decoration: none; margin-left: 1rem; padding: 0.5rem 1rem; border-radius: 6px; background: #e94560; }
+        nav a { color: white; text-decoration: none; margin-left: 0.5rem; padding: 0.5rem 1rem; border-radius: 6px; background: #e94560; }
+        nav a.green { background: #25D366; }
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
         .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
         .stat-card { background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -23,78 +24,29 @@
         .edit-btn { background: #1a1a2e; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; margin-right: 0.3rem; font-size: 0.8rem; }
         .delete-btn { background: #e94560; color: white; padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.8rem; }
         tr:hover { background: #f9f9f9; }
-        .visitor-table td { font-size: 0.85rem; }
-        .flag { font-size: 1.2rem; }
     </style>
 </head>
 <body>
     <header>
         <h1>🌿 Admin Panel</h1>
         <nav>
-            <a href="/">View Shop</a>
-            <a href="/admin/visitors" target="_blank">👥 Visitors</a>
-            <a href="/admin/visitors" target="_blank">👥 Visitors</a>
+            <a href="/" >View Shop</a>
+            <a href="/admin/visitors" target="_blank" class="green">👥 Visitors</a>
             <a href="/admin/logout">Logout</a>
         </nav>
     </header>
     <div class="container">
-        <!-- STATS -->
         <div class="stats">
-            <div class="stat-card">
-                <h3>{{ products|length }}</h3>
-                <p>Total Products</p>
-            </div>
-            <div class="stat-card">
-                <h3>{{ total_visitors }}</h3>
-                <p>Total Visitors</p>
-            </div>
-            <div class="stat-card">
-                <h3>{{ today_visitors }}</h3>
-                <p>Today's Visitors</p>
-            </div>
-            <div class="stat-card">
-                <h3>Rs. {{ (products|sum(attribute='price') / products|length)|int if products else 0 }}</h3>
-                <p>Avg Price</p>
-            </div>
+            <div class="stat-card"><h3>{{ products|length }}</h3><p>Total Products</p></div>
+            <div class="stat-card"><h3>{{ total_visitors }}</h3><p>Total Visitors</p></div>
+            <div class="stat-card"><h3>{{ today_visitors }}</h3><p>Today's Visitors</p></div>
+            <div class="stat-card"><h3>Rs. {{ (products|sum(attribute='price') / products|length)|int if products else 0 }}</h3><p>Avg Price</p></div>
         </div>
-
-        <!-- VISITOR TRACKING -->
-        <p class="section-title">👥 Recent Visitors</p>
-        <table class="visitor-table">
-            <thead>
-                <tr>
-                    <th>IP Address</th>
-                    <th>Country</th>
-                    <th>City</th>
-                    <th>Page</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for v in visitors %}
-                <tr>
-                    <td>{{ v.ip }}</td>
-                    <td>{{ v.country }}</td>
-                    <td>{{ v.city }}</td>
-                    <td>{{ v.page }}</td>
-                    <td>{{ v.visited_at.strftime('%d/%m %H:%M') }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <!-- PRODUCTS -->
         <p class="section-title">📦 Products</p>
         <a href="/admin/add" class="add-btn">➕ Add New Product</a>
         <table>
             <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Title</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                    <th>Actions</th>
-                </tr>
+                <tr><th>Image</th><th>Title</th><th>Price</th><th>Category</th><th>Actions</th></tr>
             </thead>
             <tbody>
                 {% for p in products %}
