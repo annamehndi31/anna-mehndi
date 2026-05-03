@@ -17,11 +17,10 @@
         input:focus { border-color: #e94560; outline: none; }
         .upload-area { border: 2px dashed #e94560; border-radius: 8px; padding: 2rem; text-align: center; margin-bottom: 1rem; cursor: pointer; background: #fff5f5; }
         .upload-area:hover { background: #ffe0e0; }
-        .upload-area input[type="file"] { display: none; }
         .preview { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; display: none; }
         .btn { background: #e94560; color: white; padding: 0.8rem 2rem; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; width: 100%; }
-        .btn:hover { background: #c73652; }
-        .uploading { display: none; text-align: center; color: #666; margin-bottom: 1rem; }
+        .uploading { text-align: center; color: #666; margin-bottom: 1rem; display: none; }
+        .success { color: green; font-size: 0.9rem; margin-bottom: 1rem; display: none; }
     </style>
 </head>
 <body>
@@ -32,7 +31,7 @@
     <div class="container">
         <div class="form-box">
             <h2>➕ Add New Product</h2>
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" id="productForm">
                 <label>Product Title</label>
                 <input type="text" name="title" id="titleInput" placeholder="Enter product title" required oninput="generateLink()">
 
@@ -41,44 +40,68 @@
 
                 <label>Product Image</label>
                 <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                    <input type="file" id="fileInput" name="image_file" accept="image/*" onchange="previewImage(this)">
-                    <p>📸 Click to upload image from your device</p>
+                    <input type="file" id="fileInput" accept="image/*" onchange="uploadToCloudinary(this)" style="display:none">
+                    <p>📸 Click to upload image</p>
                     <small>JPG, PNG, WEBP supported</small>
                 </div>
-                <img id="preview" class="preview">
                 <p class="uploading" id="uploading">⏳ Uploading image...</p>
+                <p class="success" id="successMsg">✅ Image uploaded!</p>
+                <img id="preview" class="preview">
+                <input type="hidden" name="image" id="imageUrl">
 
                 <label>Vendor</label>
                 <input type="text" name="vendor" placeholder="Vendor name" value="Anna Mehndi Stencils">
 
                 <label>Product Link (auto generated)</label>
-                <input type="text" name="link" id="linkInput" placeholder="Auto generated from title">
+                <input type="text" name="link" id="linkInput" placeholder="Auto generated">
 
-                <button type="submit" class="btn">➕ Add Product</button>
+                <button type="submit" class="btn" id="submitBtn">➕ Add Product</button>
             </form>
         </div>
     </div>
     <script>
-        function previewImage(input) {
-            if(input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('preview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
+        const CLOUD_NAME = 'dpx7wox5m';
+        const UPLOAD_PRESET = 'anna-mehndi';
+
+        async function uploadToCloudinary(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            document.getElementById('uploading').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+
+            try {
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.secure_url) {
+                    document.getElementById('imageUrl').value = data.secure_url;
+                    document.getElementById('preview').src = data.secure_url;
+                    document.getElementById('preview').style.display = 'block';
+                    document.getElementById('successMsg').style.display = 'block';
+                    document.getElementById('uploading').style.display = 'none';
+                    document.getElementById('submitBtn').disabled = false;
+                } else {
+                    alert('Upload failed! Check upload preset.');
+                    document.getElementById('uploading').style.display = 'none';
+                    document.getElementById('submitBtn').disabled = false;
                 }
-                reader.readAsDataURL(input.files[0]);
+            } catch(e) {
+                alert('Upload error: ' + e);
+                document.getElementById('uploading').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
             }
         }
 
         function generateLink() {
             const title = document.getElementById('titleInput').value;
-            const link = title.toLowerCase()
-                .replace(/[^a-z0-9\s]/g, '')
-                .replace(/\s+/g, '-')
-                .trim();
-            document.getElementById('linkInput').value = 
-                'https://web-production-8b9ae.up.railway.app/products/' + link;
+            const link = title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').trim();
+            document.getElementById('linkInput').value = 'https://web-production-8b9ae.up.railway.app/products/' + link;
         }
     </script>
 </body>
