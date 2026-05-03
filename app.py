@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, flash
 from flask_sqlalchemy import SQLAlchemy
 import json, os, urllib.parse
 
@@ -7,6 +7,8 @@ app.secret_key = "annahenna2024"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+
+ADMIN_PASSWORD = "anna1234"
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +38,9 @@ with app.app_context():
                 ))
             db.session.commit()
             print(f"Imported {len(products)} products!")
+
+def admin_required():
+    return session.get("admin_logged_in")
 
 @app.route("/")
 def index():
@@ -92,6 +97,72 @@ def checkout():
     msg += f"\nTotal: Rs.{int(total)}"
     wa_url = f"https://wa.me/923127891021?text={urllib.parse.quote(msg)}"
     return redirect(wa_url)
+
+# ADMIN ROUTES
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        if request.form.get("password") == ADMIN_PASSWORD:
+            session["admin_logged_in"] = True
+            return redirect(url_for("admin_dashboard"))
+        return render_template("admin_login.html", error="Wrong password!")
+    return render_template("admin_login.html", error=None)
+
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin_logged_in", None)
+    return redirect(url_for("index"))
+
+@app.route("/admin")
+def admin_dashboard():
+    if not admin_required():
+        return redirect(url_for("admin_login"))
+    products = Product.query.all()
+    return render_template("admin_dashboard.html", products=products)
+
+@app.route("/admin/add", methods=["GET", "POST"])
+def admin_add():
+    if not admin_required():
+        return redirect(url_for("admin_login"))
+    if request.method == "POST":
+        try:
+            price = float(request.form.get("price", 0))
+        except:
+            price = 0
+        product = Product(
+            title=request.form.get("title"),
+            price=price,
+            image=request.form.get("image", ""),
+            link=request.form.get("link", ""),
+            vendor=request.form.get("vendor", "")
+        )
+        db.session.add(product)
+        db.session.commit()
+        return redirect(url_for("admin_dashboard"))
+    return render_template("admin_add.html")
+
+@app.route("/admin/edit/<int:id>", methods=["GET", "POST"])
+def admin_edit(id):
+    if not admin_required():
+        return redirect(url_for("admin_login"))
+    p = Product.query.get_or_404(id)
+    if request.method == "POST":
+        p.title = request.form.get("title")
+        p.price = float(request.form.get("price", 0))
+        p.image = request.form.get("image", "")
+        p.vendor = request.form.get("vendor", "")
+        db.session.commit()
+        return redirect(url_for("admin_dashboard"))
+    return render_template("admin_edit.html", product=p)
+
+@app.route("/admin/delete/<int:id>")
+def admin_delete(id):
+    if not admin_required():
+        return redirect(url_for("admin_login"))
+    p = Product.query.get_or_404(id)
+    db.session.delete(p)
+    db.session.commit()
+    return redirect(url_for("admin_dashboard"))
 
 if __name__ == "__main__":
     app.run(debug=True)
