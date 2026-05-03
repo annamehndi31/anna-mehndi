@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, session, request
 from flask_sqlalchemy import SQLAlchemy
-import json, os, urllib.parse
+import json, os, urllib.parse, random
 
 app = Flask(__name__)
 app.secret_key = "annahenna2024"
@@ -48,7 +48,9 @@ def index():
         products = Product.query.filter(Product.title.ilike(f"%{search}%")).order_by(Product.id.desc()).all()
     else:
         products = Product.query.order_by(Product.id.desc()).all()
-    return render_template("index.html", products=products, search=search)
+    all_products = Product.query.filter(Product.image != "").all()
+    featured = random.sample(all_products, min(5, len(all_products)))
+    return render_template("index.html", products=products, search=search, featured=featured)
 
 @app.route("/product/<int:id>")
 def product(id):
