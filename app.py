@@ -10,6 +10,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 ADMIN_PASSWORD = "anna1234"
+CATEGORIES = ["Mehndi Stickers","Mehndi Cones","Wall Art & CO2 Laser","Marbles & Bangles","Other"]
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,44 +41,26 @@ with app.app_context():
                 except:
                     price = 0
                 db.session.add(Product(
-                    title=p["title"],
-                    price=price,
+                    title=p["title"], price=price,
                     image=p.get("local_image", ""),
-                    link=p["link"],
-                    vendor=p.get("vendor", ""),
-                    category="Mehndi Stickers"
+                    link=p["link"], vendor=p.get("vendor", ""),
+                    category=p.get("category", "Mehndi Stickers")
                 ))
             db.session.commit()
 
 def track_visitor(page):
     try:
         ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-        if ip:
-            ip = ip.split(',')[0].strip()
-        # Get location from ip
+        if ip: ip = ip.split(',')[0].strip()
         import urllib.request
-        location = json.loads(urllib.request.urlopen(f'http://ip-api.com/json/{ip}').read())
-        visitor = Visitor(
-            ip=ip,
-            country=location.get('country', 'Unknown'),
-            city=location.get('city', 'Unknown'),
-            page=page
-        )
-        db.session.add(visitor)
+        location = json.loads(urllib.request.urlopen(f'http://ip-api.com/json/{ip}', timeout=2).read())
+        db.session.add(Visitor(ip=ip, country=location.get('country','Unknown'),
+            city=location.get('city','Unknown'), page=page))
         db.session.commit()
-    except:
-        pass
+    except: pass
 
 def admin_required():
     return session.get("admin_logged_in")
-
-CATEGORIES = [
-    "Mehndi Stickers",
-    "Mehndi Cones",
-    "Wall Art & CO2 Laser",
-    "Marbles & Bangles",
-    "Other"
-]
 
 @app.route("/")
 def index():
@@ -85,10 +68,8 @@ def index():
     search = request.args.get("search", "")
     category = request.args.get("category", "")
     query = Product.query
-    if search:
-        query = query.filter(Product.title.ilike(f"%{search}%"))
-    if category:
-        query = query.filter(Product.category == category)
+    if search: query = query.filter(Product.title.ilike(f"%{search}%"))
+    if category: query = query.filter(Product.category == category)
     products = query.order_by(Product.id.desc()).all()
     all_with_img = Product.query.filter(Product.image != "").all()
     featured = random.sample(all_with_img, min(5, len(all_with_img)))
@@ -182,11 +163,18 @@ def admin_dashboard():
     visitors = Visitor.query.order_by(Visitor.visited_at.desc()).limit(50).all()
     total_visitors = Visitor.query.count()
     today_visitors = Visitor.query.filter(
-        db.func.date(Visitor.visited_at) == datetime.utcnow().date()
-    ).count()
+        db.func.date(Visitor.visited_at) == datetime.utcnow().date()).count()
     return render_template("admin_dashboard.html", products=products,
                          visitors=visitors, total_visitors=total_visitors,
                          today_visitors=today_visitors)
+
+@app.route("/admin/visitors")
+def admin_visitors():
+    if not admin_required():
+        return redirect(url_for("admin_login"))
+    visitors = Visitor.query.order_by(Visitor.visited_at.desc()).all()
+    total = Visitor.query.count()
+    return render_template("visitors.html", visitors=visitors, total=total)
 
 @app.route("/admin/add", methods=["GET", "POST"])
 def admin_add():
@@ -197,14 +185,11 @@ def admin_add():
             price = float(request.form.get("price", 0))
         except:
             price = 0
-        image_url = request.form.get("image", "")
         title = request.form.get("title", "")
-        auto_link = f"https://web-production-8b9ae.up.railway.app/products/{title.lower().replace(' ', '-')}"
         product = Product(
-            title=title,
-            price=price,
-            image=image_url,
-            link=request.form.get("link") or auto_link,
+            title=title, price=price,
+            image=request.form.get("image", ""),
+            link=request.form.get("link", ""),
             vendor=request.form.get("vendor", ""),
             category=request.form.get("category", "Mehndi Stickers")
         )
@@ -240,11 +225,3 @@ def admin_delete(id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-@app.route("/admin/visitors")
-def admin_visitors():
-    if not admin_required():
-        return redirect(url_for("admin_login"))
-    visitors = Visitor.query.order_by(Visitor.visited_at.desc()).all()
-    total = Visitor.query.count()
-    return render_template("visitors.html", visitors=visitors, total=total)
