@@ -157,6 +157,33 @@
 
         <div class="how-to-use">
             <h3>📖 How To Use?</h3>
+            {% if product.category == "Wall Art & CO2 Laser" %}
+            <ol>
+                <li>Unbox carefully and remove all protective packaging.</li>
+                <li>Choose your desired location on the wall.</li>
+                <li>Use a level to ensure straight placement.</li>
+                <li>Mark drill points or use adhesive strips provided.</li>
+                <li>Mount the piece securely on the wall.</li>
+                <li>Step back and enjoy your beautiful wall art! 🖼️</li>
+            </ol>
+            {% elif product.category == "Marbles & Bangles" %}
+            <ol>
+                <li>Handle with care — delicate item.</li>
+                <li>Clean with soft dry cloth only.</li>
+                <li>Store in provided packaging when not in use.</li>
+                <li>Avoid contact with water and chemicals.</li>
+                <li>Enjoy your beautiful accessory! 💎</li>
+            </ol>
+            {% elif product.category == "Mehndi Cones" %}
+            <ol>
+                <li>Cut the tip of the cone to desired thickness.</li>
+                <li>Apply henna in desired pattern on skin.</li>
+                <li>Let dry for 2-4 hours for best results.</li>
+                <li>Scrape off dried henna gently.</li>
+                <li>Avoid water for 12 hours after application.</li>
+                <li>Enjoy your beautiful mehndi! 🌿</li>
+            </ol>
+            {% else %}
             <ol>
                 <li>Wash and dry the skin.</li>
                 <li>Carefully remove white backing paper from stencil.</li>
@@ -168,6 +195,7 @@
                 <li>Once henna is completely dry, rub off excess paint and remove stencil.</li>
                 <li>And you're done! 🌿</li>
             </ol>
+            {% endif %}
         </div>
     </div>
 
