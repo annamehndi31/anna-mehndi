@@ -19,6 +19,7 @@ class Product(db.Model):
     image = db.Column(db.String(500))
     link = db.Column(db.String(500))
     vendor = db.Column(db.String(100))
+    description = db.Column(db.Text, default='')
     category = db.Column(db.String(100), default="Mehndi Stickers")
 
 class Visitor(db.Model):

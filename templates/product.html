@@ -155,6 +155,12 @@
             </div>
         </div>
 
+        {% if product.description %}
+        <div class="how-to-use">
+            <h3>📝 Description</h3>
+            <p style="color:#555;line-height:1.8;padding:0.5rem 0">{{ product.description }}</p>
+        </div>
+        {% endif %}
         <div class="how-to-use">
             <h3>📖 How To Use?</h3>
             {% if product.category == "Wall Art & CO2 Laser" %}
